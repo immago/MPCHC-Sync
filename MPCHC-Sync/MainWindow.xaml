@@ -1,0 +1,25 @@
+﻿<Window x:Class="MPCHC_Sync.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MPCHC_Sync"
+        mc:Ignorable="d"
+        Title="MPC-HC Sync" Height="87.603" Width="393.34">
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="56"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="nameLabel" Content="Name" Grid.ColumnSpan="2" FontWeight="Bold" Background="Black" Foreground="White"/>
+            <Label x:Name="statusLabel" Content="Status" Margin="0" Grid.Row="1"/>
+            <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0" Grid.Row="1"/>
+        </Grid>
+
+    </Grid>
+</Window>
