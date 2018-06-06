@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Timers;
+using System.Net;
 using System.Threading;
 
 namespace MPCHC_Sync
@@ -30,8 +31,11 @@ namespace MPCHC_Sync
         {
             InitializeComponent();
 
-            player = new MPCHomeCinema("http://localhost:13579");
-            RunUpdate();
+            //player = new MPCHomeCinema("http://localhost:13579");
+            //RunUpdate();
+
+            Client client = new Client();
+            client.Connect(Dns.GetHostName(), 5000);
         }
 
 
