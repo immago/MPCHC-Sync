@@ -17,19 +17,19 @@ namespace MPCHC_Sync
     {
         private TcpClient client;
 
-        public void Connect(String host, int port)
+        public bool Connect(String host, int port)
         {
-            client = new TcpClient();
-            client.Connect(host, port);
-            NetworkStream stream = client.GetStream();
-
-
-            new Thread(Read).Start(); 
-
-
-
-            //Send("hello world 1");
-            //Read();
+            try
+            {
+                client = new TcpClient();
+                client.Connect(host, port);
+                NetworkStream stream = client.GetStream();
+                new Thread(Read).Start();
+            }catch
+            {
+                return false;
+            }
+            return true;
         }
 
 
