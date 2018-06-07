@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,8 +14,17 @@ using System.Threading.Tasks;
 namespace MPCHC_Sync
 {
 
+    public class ClientEventArgs : EventArgs
+    {
+        public String file { get; set; }
+        public TimeSpan position { get; set; }
+        public State state { get; set; }
+    }
+
     class Client
     {
+
+        public event EventHandler<ClientEventArgs> stateChanged;
         private TcpClient client;
 
         public bool Connect(String host, int port)
@@ -94,8 +104,8 @@ namespace MPCHC_Sync
                 ["identifer"] = identifer,
                 ["command"] = "set",
                 ["file"] = file,
-                ["position"] = position.TotalSeconds.ToString(),
-                ["duration"] = duration.TotalSeconds.ToString(),
+                ["position"] = position.TotalSeconds.ToString(CultureInfo.InvariantCulture),
+                ["duration"] = duration.TotalSeconds.ToString(CultureInfo.InvariantCulture),
                 ["state"] = ((int)state).ToString() 
             };
             Send(JsonConvert.SerializeObject(data));
@@ -127,6 +137,20 @@ namespace MPCHC_Sync
             {
                 Debug.WriteLine($"Status: {responce.status} Command: {responce.command}");
             }
+
+            if(responce.new_data != null)
+            {
+                EventHandler<ClientEventArgs> handler = stateChanged;
+                if (handler != null)
+                {
+                    ClientEventArgs args = new ClientEventArgs();
+                    args.file = responce.new_data.file;
+                    args.position = TimeSpan.FromSeconds((double)responce.new_data.position);
+                    args.state = responce.new_data.state;                   
+                    handler(this, args);
+                }
+            }
+
 
         }
     }

@@ -21,7 +21,7 @@ namespace MPCHC_Sync
     class MPCController
     {
 
-        public event EventHandler<MPCControllerEventArgs> dataChanged;
+        public event EventHandler<MPCControllerEventArgs> stateChanged;
 
         private MPCHomeCinema player;
         private Info previousInfo;
@@ -36,6 +36,16 @@ namespace MPCHC_Sync
         }
 
         // Observing
+
+        public Info GetLastInfo()
+        {
+            return previousInfo;
+            //Info info;
+            //Task.Run(async () =>
+            //{
+            //    var task = await player.GetInfo();
+            //}).GetAwaiter().GetResult();
+        }
 
         private void RunUpdate()
         {
@@ -69,7 +79,7 @@ namespace MPCHC_Sync
                 // Send event
                 if(!IsInfoEqual(previousInfo, task))
                 {
-                    EventHandler<MPCControllerEventArgs> handler = dataChanged;
+                    EventHandler<MPCControllerEventArgs> handler = stateChanged;
                     if (handler != null)
                     {
                         MPCControllerEventArgs args = new MPCControllerEventArgs();
@@ -131,6 +141,12 @@ namespace MPCHC_Sync
 
         public void SetState(State state)
         {
+
+            if(previousInfo != null && previousInfo.State == state)
+            {
+                return;
+            }
+
             StopUpdate();
             Task.Run(async () =>
             {
@@ -156,10 +172,20 @@ namespace MPCHC_Sync
 
         public void SetPosition(TimeSpan position)
         {
+
+            TimeSpan difference = position - previousInfo.Position;
+            double maxError = 500 + updateInterval.TotalMilliseconds; // ms 
+            if (Math.Abs(difference.TotalMilliseconds) < maxError) // not needed
+            {
+                return;
+            }
+
             StopUpdate();
             Task.Run(async () =>
             {
-                Result task = await player.SetPosition(position);
+                // Fix: MPCHomeCinema class dont support steps lower then 1 sec
+                TimeSpan ts = TimeSpan.FromSeconds(Math.Round(position.TotalSeconds));
+                Result task = await player.SetPosition(ts);
                 
             }).GetAwaiter().GetResult();
             RunUpdate();

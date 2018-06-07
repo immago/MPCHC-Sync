@@ -25,7 +25,6 @@ namespace MPCHC_Sync
     /// </summary>
     public partial class MainWindow : Window
     {
-        //private MPCHomeCinema player;
         private MPCController player;
         private Settings settings;
         private Client client;
@@ -36,8 +35,9 @@ namespace MPCHC_Sync
 
             settings = new Settings();
             client = new Client();
+            client.stateChanged += clientStateChanged;
             player = new MPCController();
-            player.dataChanged += dataChanged;
+            player.stateChanged += playerStateChanged;
 
 
             //Debug.WriteLine(settings.UUID);
@@ -49,17 +49,24 @@ namespace MPCHC_Sync
             
         }
 
-        private void dataChanged(object sender, MPCControllerEventArgs e)
+        private void clientStateChanged(object sender, ClientEventArgs e)
         {
+            Debug.WriteLine("Changed by server, update local...");
+            player.SetPosition(e.position);
+            player.SetState(e.state);
+        }
 
+        private void playerStateChanged(object sender, MPCControllerEventArgs e)
+        {
+            Info info = e.info;
             if (e.chnagedByUser)
             {
-                Debug.WriteLine("Changed by user");
+                Debug.WriteLine("Changed by user, sending to server...");
+                client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
             }
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Info info = e.info;
                 nameLabel.Content = info.FileName;
                 positionLabel.Content = $"{info.Position:hh\\:mm\\:ss}/{info.Duration:hh\\:mm\\:ss}";
                 statusLabel.Content = info.State;
@@ -73,7 +80,13 @@ namespace MPCHC_Sync
             if (succes)
             {
                 client.Subscribe(settings.Token, settings.UUID);
-                client.Set(settings.Token, settings.UUID, "test.mp4", new TimeSpan(0, 0, 10), new TimeSpan(1, 10, 0), State.Playing);
+
+                Info info = player.GetLastInfo();
+                if(info != null)
+                {
+                    client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
+                }
+                
             }
             else
             {
@@ -85,6 +98,8 @@ namespace MPCHC_Sync
         {
             //player.SetState(State.Paused);
             //player.SetPosition(new TimeSpan(0, 0, 20));
+            Info info = player.GetLastInfo();
+            client.Set(settings.Token, settings.UUID, info.FileName, info.Position +  TimeSpan.FromSeconds(10.5), info.Duration, State.Paused);
         }
     }
 }
