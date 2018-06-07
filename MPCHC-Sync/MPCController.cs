@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Diagnostics;
+using System.IO;
 
 namespace MPCHC_Sync
 {
@@ -51,11 +52,17 @@ namespace MPCHC_Sync
         public Info GetLastInfo()
         {
             return previousInfo;
-            //Info info;
-            //Task.Run(async () =>
-            //{
-            //    var task = await player.GetInfo();
-            //}).GetAwaiter().GetResult();
+
+        }
+
+        public Info GetInfo()
+        {
+            Info info = null;
+            Task.Run(async () =>
+            {
+                info = await player.GetInfo();
+            }).GetAwaiter().GetResult();
+            return info;
         }
 
         private void RunUpdate()
@@ -198,6 +205,25 @@ namespace MPCHC_Sync
                 TimeSpan ts = TimeSpan.FromSeconds(Math.Round(position.TotalSeconds));
                 Result task = await player.SetPosition(ts);
                 
+            }).GetAwaiter().GetResult();
+            RunUpdate();
+        }
+
+        public void OpenFile(string path)
+        {
+            if (previousInfo != null && previousInfo.FileName == Path.GetFileName(path))
+            {
+                return;
+            }
+
+            StopUpdate();
+            Task.Run(async () =>
+            {
+                Result openResult = await player.OpenFileAsync(path);
+                Thread.Sleep(500);
+                Result pauseResult = await player.PauseAsync();
+                Thread.Sleep(500);
+
             }).GetAwaiter().GetResult();
             RunUpdate();
         }

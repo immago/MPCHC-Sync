@@ -109,21 +109,23 @@ namespace MPCHC_Sync
                 string filePath = openFileDialog.FileName;
                 Debug.WriteLine("TODO: " + filePath);
 
+                // Open file
+                player.OpenFile(filePath);
+                Info info = player.GetInfo();
+
+                // Connect to server
                 bool succes = client.Connect(Dns.GetHostName(), 5000, true);
                 if (succes)
                 {
                     client.Subscribe(settings.Token, settings.UUID);
                     connectedAddressLabel.Content = client.subscribedSessionIdentifer;
-                    client.Set(settings.Token, settings.UUID, Path.GetFileName(filePath), new TimeSpan(0, 0, 0), new TimeSpan(0, 1, 0), State.Playing);
+                    client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
                 }
                 else
                 {
                     MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                } 
             }
- 
-
-
         }
 
         private void connectButton_Click(object sender, RoutedEventArgs e)

@@ -59,7 +59,7 @@ namespace MPCHC_Sync
 
         public void Disconnect()
         {
-            if (client != null)
+            if (client != null && client.Connected)
             {
                 client.GetStream().Close();
                 client.Close();
