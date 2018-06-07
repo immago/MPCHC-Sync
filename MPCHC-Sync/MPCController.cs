@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace MPCHC_Sync
 {
@@ -21,9 +22,11 @@ namespace MPCHC_Sync
     {
 
         public event EventHandler<MPCControllerEventArgs> dataChanged;
+
         private MPCHomeCinema player;
         private Info previousInfo;
         private TimeSpan updateInterval;
+        CancellationTokenSource cancelTokenSource;
 
         public MPCController()
         {
@@ -32,15 +35,29 @@ namespace MPCHC_Sync
             RunUpdate();
         }
 
+        // Observing
+
         private void RunUpdate()
         {
-            CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-            CancellationToken token = cancelTokenSource.Token;
+            if(cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
+            {
+                Debug.WriteLine("alrady runned");
+                return;
+            }
+
+            cancelTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancelTokenSource.Token;
 
             Task.Run(async () =>
             {
-                await RunUpdateTask(updateInterval, token);
+                await RunUpdateTask(updateInterval, cancellationToken);
             }).GetAwaiter();
+        }
+
+        private void StopUpdate()
+        {
+            previousInfo = null;
+            cancelTokenSource.Cancel();
         }
 
         private async Task RunUpdateTask(TimeSpan interval, CancellationToken cancellationToken)
@@ -108,6 +125,44 @@ namespace MPCHC_Sync
             }
 
             return false;
+        }
+
+        // Control
+
+        public void SetState(State state)
+        {
+            StopUpdate();
+            Task.Run(async () =>
+            {
+                Result task;
+                switch (state)
+                {
+                    case State.Playing:
+                        task = await player.PlayAsync();
+                        break;
+                    case State.Paused:
+                        task = await player.PauseAsync();
+                        break;
+                    case State.Stoped:
+                        task = await player.StopAsync();
+                        break;
+                    default:
+                        task = await player.StopAsync();
+                        break;
+                }
+            }).GetAwaiter().GetResult();
+            RunUpdate();
+        }
+
+        public void SetPosition(TimeSpan position)
+        {
+            StopUpdate();
+            Task.Run(async () =>
+            {
+                Result task = await player.SetPosition(position);
+                
+            }).GetAwaiter().GetResult();
+            RunUpdate();
         }
 
     }

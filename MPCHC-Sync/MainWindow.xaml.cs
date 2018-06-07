@@ -66,36 +66,6 @@ namespace MPCHC_Sync
             });
         }
 
-
-        // Update methods
-        //private void RunUpdate()
-        //{
-        //    CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-        //    CancellationToken token = cancelTokenSource.Token;
-
-        //    Task.Run(async () =>
-        //    {
-        //        await RunUpdateTask(new TimeSpan(0, 0, 1), token);
-        //    }).GetAwaiter();
-        //}
-
-        //private async Task RunUpdateTask(TimeSpan interval, CancellationToken cancellationToken)
-        //{
-        //    while (!cancellationToken.IsCancellationRequested)
-        //    {
-        //        var task = await player.GetInfo();
-        //        Application.Current.Dispatcher.Invoke(() =>
-        //        {
-        //            nameLabel.Content = task.FileName;
-        //            positionLabel.Content = $"{task.Position:hh\\:mm\\:ss}/{task.Duration:hh\\:mm\\:ss}";
-        //            statusLabel.Content = task.State;
-        //        });
-        //        await Task.Delay(interval, cancellationToken);
-        //    }
-        //}
-
-
-
         // Buttons
         private void hostButton_Click(object sender, RoutedEventArgs e)
         {
@@ -113,7 +83,8 @@ namespace MPCHC_Sync
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
-
+            //player.SetState(State.Paused);
+            //player.SetPosition(new TimeSpan(0, 0, 20));
         }
     }
 }
