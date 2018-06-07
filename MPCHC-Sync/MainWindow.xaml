@@ -19,7 +19,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label x:Name="nameLabel" Content="Name" Grid.ColumnSpan="3" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch"/>
+            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="3" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch"/>
             <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch"/>
             <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="2" VerticalContentAlignment="Stretch"/>
             <Button x:Name="connectButton" Content="Connect" Margin="5,2,0,5" Grid.Row="3" Click="connectButton_Click" Grid.ColumnSpan="2"/>

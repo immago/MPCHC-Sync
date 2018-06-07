@@ -22,6 +22,7 @@ namespace MPCHC_Sync
     {
 
         public event EventHandler<MPCControllerEventArgs> stateChanged;
+        public event EventHandler<EventArgs> initialized;
 
         private MPCHomeCinema player;
         private Info previousInfo;
@@ -32,6 +33,16 @@ namespace MPCHC_Sync
         {
             player = new MPCHomeCinema("http://localhost:13579");
             updateInterval = new TimeSpan(0, 0, 1);
+
+            // Wait connection
+            Task.Run(async () =>
+            {
+                var task = await player.GetInfo();
+                initialized?.Invoke(this, new EventArgs());
+
+            }).GetAwaiter();
+
+            // Update normaly
             RunUpdate();
         }
 

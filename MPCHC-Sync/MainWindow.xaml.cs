@@ -27,9 +27,11 @@ namespace MPCHC_Sync
             client.connectionStateChanged += clientConnectionStateChanged;
             player = new MPCController();
             player.stateChanged += playerStateChanged;
+            player.initialized += playerInitialized;
 
             // Not connected
             disconnectGrid.Visibility = Visibility.Hidden;
+            this.IsEnabled = false;
 
             // Run MPC
             mpcProceess = Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "lib/mpc-hc64/mpc-hc64.exe"));
@@ -44,6 +46,15 @@ namespace MPCHC_Sync
             this.Left = (screenWidth / 2) - (windowWidth / 2);
             this.Top = (screenHeight / 2) - (windowHeight / 2) + 210;
 
+        }
+
+        private void playerInitialized(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                this.IsEnabled = true;
+                nameLabel.Content = "";
+            });
         }
 
         private void mpcProceessExited(object sender, EventArgs e)
