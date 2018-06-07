@@ -59,9 +59,12 @@ namespace MPCHC_Sync
 
         public void Disconnect()
         {
-            client.GetStream().Close();
-            client.Close();
-            OnConnectionStateChanged(ConnectionState.Disconnected);
+            if (client != null)
+            {
+                client.GetStream().Close();
+                client.Close();
+                OnConnectionStateChanged(ConnectionState.Disconnected);
+            }
         }
 
         void Send(String msg)

@@ -153,6 +153,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="lib\mpc-hc64\LAVFilters64\LAVAudio.ax" />
+    <None Include="lib\mpc-hc64\LAVFilters64\LAVFilters.Dependencies.manifest" />
+    <None Include="lib\mpc-hc64\LAVFilters64\LAVSplitter.ax" />
+    <None Include="lib\mpc-hc64\LAVFilters64\LAVVideo.ax" />
+    <None Include="lib\mpc-hc64\mpc-hc64.ini" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -162,5 +167,25 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="lib\mpc-hc64\Authors.txt" />
+    <Resource Include="lib\mpc-hc64\COPYING.txt" />
+    <Content Include="lib\mpc-hc64\D3DCompiler_43.dll" />
+    <Content Include="lib\mpc-hc64\d3dx9_43.dll" />
+    <Content Include="lib\mpc-hc64\Lang\mpcresources.ru.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\avcodec-lav-57.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\avfilter-lav-6.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\avformat-lav-57.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\avresample-lav-3.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\avutil-lav-55.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\IntelQuickSyncDecoder.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\libbluray.dll" />
+    <Content Include="lib\mpc-hc64\LAVFilters64\swscale-lav-4.dll" />
+    <Content Include="lib\mpc-hc64\mpc-hc64.exe" />
+    <Content Include="lib\mpc-hc64\mpciconlib.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)lib\*.*" "$(ProjectDir)$(OutDir)lib" /Y /I /E</PostBuildEvent>
+  </PropertyGroup>
 </Project>

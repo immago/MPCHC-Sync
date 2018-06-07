@@ -1,22 +1,9 @@
-﻿using MPC_HC.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
-using System.Timers;
 using System.Net;
-using System.Threading;
+using Microsoft.Win32;
+using System.IO;
 
 namespace MPCHC_Sync
 {
@@ -28,6 +15,7 @@ namespace MPCHC_Sync
         private MPCController player;
         private Settings settings;
         private Client client;
+        private Process mpcProceess;
 
         public MainWindow()
         {
@@ -40,15 +28,31 @@ namespace MPCHC_Sync
             player = new MPCController();
             player.stateChanged += playerStateChanged;
 
+            // Not connected
             disconnectGrid.Visibility = Visibility.Hidden;
 
-            //Debug.WriteLine(settings.UUID);
-            //Debug.WriteLine(Dns.GetHostName());
+            // Run MPC
+            mpcProceess = Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "lib/mpc-hc64/mpc-hc64.exe"));
+            mpcProceess.EnableRaisingEvents = true;
+            mpcProceess.Exited += mpcProceessExited;
 
-            //client.Connect(Dns.GetHostName(), 5000);
-            //client.Subscribe("86de0ff4-3115-4385-b485-b5e83ae6b890", "1234");
-            //client.Set("86de0ff4-3115-4385-b485-b5e83ae6b890", "1234", "test.mp4", new TimeSpan(0, 0, 10), new TimeSpan(1, 10, 0), State.Playing);
+            // Window position
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            double windowWidth = this.Width;
+            double windowHeight = this.Height;
+            this.Left = (screenWidth / 2) - (windowWidth / 2);
+            this.Top = (screenHeight / 2) - (windowHeight / 2) + 210;
 
+        }
+
+        private void mpcProceessExited(object sender, EventArgs e)
+        {
+            client.Disconnect();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Application.Current.Shutdown();
+            });
         }
 
         private void clientConnectionStateChanged(object sender, ClientConnectionEventArgs e)
@@ -86,23 +90,29 @@ namespace MPCHC_Sync
         // Buttons
         private void hostButton_Click(object sender, RoutedEventArgs e)
         {
-            bool succes = client.Connect(Dns.GetHostName(), 5000, true);
-            if (succes)
-            {
-                client.Subscribe(settings.Token, settings.UUID);
-                connectedAddressLabel.Content = client.subscribedSessionIdentifer;
 
-                Info info = player.GetLastInfo();
-                if(info != null)
-                {
-                    client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
-                }
-                
-            }
-            else
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Video files (*.mkv;*.webm;*.avi;*.mov;*.wmv;*.mp4;*.mpg;*.mpeg)|*.mkv;*.webm;*.avi;*.mov;*.wmv;*.mp4;*.mpg;*.mpeg|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string filePath = openFileDialog.FileName;
+                Debug.WriteLine("TODO: " + filePath);
+
+                bool succes = client.Connect(Dns.GetHostName(), 5000, true);
+                if (succes)
+                {
+                    client.Subscribe(settings.Token, settings.UUID);
+                    connectedAddressLabel.Content = client.subscribedSessionIdentifer;
+                    client.Set(settings.Token, settings.UUID, Path.GetFileName(filePath), new TimeSpan(0, 0, 0), new TimeSpan(0, 1, 0), State.Playing);
+                }
+                else
+                {
+                    MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
+ 
+
+
         }
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
@@ -121,6 +131,14 @@ namespace MPCHC_Sync
         private void copyConnectedAddressButton_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(connectedAddressLabel.Content.ToString());
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            client.Disconnect();
+            if (!mpcProceess.HasExited) { 
+                mpcProceess.CloseMainWindow();
+            }
         }
     }
 }
