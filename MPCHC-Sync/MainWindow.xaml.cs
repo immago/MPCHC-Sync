@@ -36,6 +36,10 @@ namespace MPCHC_Sync
 
             Client client = new Client();
             client.Connect(Dns.GetHostName(), 5000);
+
+            client.Subscribe("86de0ff4-3115-4385-b485-b5e83ae6b890", "1234");
+            client.Set("86de0ff4-3115-4385-b485-b5e83ae6b890", "1234", "test.mp4", new TimeSpan(0, 0, 10), new TimeSpan(1, 10, 0), State.Playing);
+            
         }
 
 

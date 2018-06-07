@@ -23,8 +23,13 @@ namespace MPCHC_Sync
             client.Connect(host, port);
             NetworkStream stream = client.GetStream();
 
-            Send("hello world 1");
-            Read();
+
+            new Thread(Read).Start(); 
+
+
+
+            //Send("hello world 1");
+            //Read();
         }
 
 
@@ -37,32 +42,74 @@ namespace MPCHC_Sync
         void Read()
         {
             NetworkStream stream = client.GetStream();
-            if (stream.CanRead)
+            Debug.WriteLine("Start read");
+            while (true)
             {
-                byte[] myReadBuffer = new byte[1024];
-                string message = "";
-                int numberOfBytesRead = 0;
 
-                // Incoming message may be larger than the buffer size. 
-                do
+                if (stream.CanRead)
                 {
-                    numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
-                    message += Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead);
-                }
-                while (stream.DataAvailable);
+                    byte[] myReadBuffer = new byte[1024];
+                    string message = "";
+                    int numberOfBytesRead = 0;
 
-                string[] commands = message.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
-                for(int i = 0; i < commands.Length-1; i++)
+                    // Incoming message may be larger than the buffer size. 
+                    do
+                    {
+                        numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
+                        message += Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead);
+                    }
+                    while (stream.DataAvailable);
+
+                    string[] commands = message.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
+                    for (int i = 0; i < commands.Length - 1; i++)
+                    {
+                        ProcessResponce(commands[i]);
+                    }
+                    message = commands[commands.Length - 1];
+
+                }
+                else
                 {
-                    ProcessResponce(commands[i]);
+                    Debug.WriteLine("Sorry.  You cannot read from this NetworkStream.");
                 }
-                message = commands[commands.Length - 1];
-
             }
-            else
+        }
+
+        public void Subscribe(string token, string identifer)
+        {
+            var data = new Dictionary<string, string>
             {
-                Debug.WriteLine("Sorry.  You cannot read from this NetworkStream.");
-            } 
+                ["token"] = token,
+                ["identifer"] = identifer,
+                ["command"] = "subscribe"
+            };
+            Send(JsonConvert.SerializeObject(data));
+        }
+
+        public void Set(string token, string identifer, string file, TimeSpan position, TimeSpan duration, State state)
+        {
+            var data = new Dictionary<string, string>
+            {
+                ["token"] = token,
+                ["identifer"] = identifer,
+                ["command"] = "set",
+                ["file"] = file,
+                ["position"] = position.TotalSeconds.ToString(),
+                ["duration"] = duration.TotalSeconds.ToString(),
+                ["state"] = ((int)state).ToString() 
+            };
+            Send(JsonConvert.SerializeObject(data));
+        }
+
+        public void Get(string token, string identifer)
+        {
+            var data = new Dictionary<string, string>
+            {
+                ["token"] = token,
+                ["identifer"] = identifer,
+                ["command"] = "get"
+            };
+            Send(JsonConvert.SerializeObject(data));
         }
 
         void ProcessResponce(String responceString)
@@ -71,16 +118,14 @@ namespace MPCHC_Sync
 
             dynamic responce = JsonConvert.DeserializeObject(responceString);
 
-            string status = responce.status;
-
-            if(status == "error")
+            if(responce.status == "error")
             {
                 Debug.WriteLine($"Error: {responce.description} code: {responce.code}");
             }
 
-            if(status == "ok")
+            if(responce.status == "ok")
             {
-                Debug.WriteLine($"Commnd: {responce.command}");
+                Debug.WriteLine($"Status: {responce.status} Command: {responce.command}");
             }
 
         }
