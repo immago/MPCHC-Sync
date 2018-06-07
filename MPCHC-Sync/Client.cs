@@ -14,27 +14,42 @@ using System.Threading.Tasks;
 namespace MPCHC_Sync
 {
 
-    public class ClientEventArgs : EventArgs
+    public class ClientVideoEventArgs : EventArgs
     {
         public String file { get; set; }
         public TimeSpan position { get; set; }
         public State state { get; set; }
     }
 
+    public class ClientConnectionEventArgs : EventArgs
+    {
+        public ConnectionState state { get; set; }
+    }
+
+    public enum ConnectionState
+    {
+        Disconnected,
+        Host,
+        Subscribed
+    }
+
     class Client
     {
-
-        public event EventHandler<ClientEventArgs> stateChanged;
+        public ConnectionState connectionState { get; private set; }
+        public string subscribedSessionIdentifer { get; private set; }
+        public event EventHandler<ClientConnectionEventArgs> connectionStateChanged;
+        public event EventHandler<ClientVideoEventArgs> videoStateChanged;
         private TcpClient client;
 
-        public bool Connect(String host, int port)
+        public bool Connect(String address, int port, bool host = true)
         {
             try
             {
                 client = new TcpClient();
-                client.Connect(host, port);
+                client.Connect(address, port);
                 NetworkStream stream = client.GetStream();
                 new Thread(Read).Start();
+                OnConnectionStateChanged(host ? ConnectionState.Host : ConnectionState.Subscribed);
             }catch
             {
                 return false;
@@ -42,18 +57,33 @@ namespace MPCHC_Sync
             return true;
         }
 
+        public void Disconnect()
+        {
+            client.GetStream().Close();
+            client.Close();
+            OnConnectionStateChanged(ConnectionState.Disconnected);
+        }
 
         void Send(String msg)
         {
             byte[] bytesToSend = UTF8Encoding.UTF8.GetBytes(msg);
-            client.GetStream().Write(bytesToSend, 0, bytesToSend.Length);
+
+            try
+            {
+                client.GetStream().Write(bytesToSend, 0, bytesToSend.Length);
+            }
+            catch
+            {
+                client.Close();
+                OnConnectionStateChanged(ConnectionState.Disconnected);
+            }
         }
 
         void Read()
         {
             NetworkStream stream = client.GetStream();
             Debug.WriteLine("Start read");
-            while (true)
+            while (client.Connected)
             {
 
                 if (stream.CanRead)
@@ -65,10 +95,16 @@ namespace MPCHC_Sync
                     // Incoming message may be larger than the buffer size. 
                     do
                     {
-                        numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
+                        try { 
+                            numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
+                        }catch
+                        {
+                            client.Close();
+                            OnConnectionStateChanged(ConnectionState.Disconnected);
+                        }
                         message += Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead);
                     }
-                    while (stream.DataAvailable);
+                    while (stream.CanRead && stream.DataAvailable);
 
                     string[] commands = message.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
                     for (int i = 0; i < commands.Length - 1; i++)
@@ -83,6 +119,19 @@ namespace MPCHC_Sync
                     Debug.WriteLine("Sorry.  You cannot read from this NetworkStream.");
                 }
             }
+            OnConnectionStateChanged(ConnectionState.Disconnected);
+        }
+
+        void OnConnectionStateChanged(ConnectionState newState)
+        {
+            connectionState = newState;
+            EventHandler<ClientConnectionEventArgs> handler = connectionStateChanged;
+            if (handler != null)
+            {
+                ClientConnectionEventArgs args = new ClientConnectionEventArgs();
+                args.state = newState;
+                handler(this, args);
+            }
         }
 
         public void Subscribe(string token, string identifer)
@@ -93,6 +142,7 @@ namespace MPCHC_Sync
                 ["identifer"] = identifer,
                 ["command"] = "subscribe"
             };
+            subscribedSessionIdentifer = identifer;
             Send(JsonConvert.SerializeObject(data));
         }
 
@@ -140,10 +190,10 @@ namespace MPCHC_Sync
 
             if(responce.new_data != null)
             {
-                EventHandler<ClientEventArgs> handler = stateChanged;
+                EventHandler<ClientVideoEventArgs> handler = videoStateChanged;
                 if (handler != null)
                 {
-                    ClientEventArgs args = new ClientEventArgs();
+                    ClientVideoEventArgs args = new ClientVideoEventArgs();
                     args.file = responce.new_data.file;
                     args.position = TimeSpan.FromSeconds((double)responce.new_data.position);
                     args.state = responce.new_data.state;                   
