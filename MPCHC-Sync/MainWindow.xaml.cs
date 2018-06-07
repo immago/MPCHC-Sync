@@ -25,6 +25,7 @@ namespace MPCHC_Sync
             client = new Client();
             client.videoStateChanged += clientVideoStateChanged;
             client.connectionStateChanged += clientConnectionStateChanged;
+            client.onError += clientOnError;
             player = new MPCController();
             player.stateChanged += playerStateChanged;
             player.initialized += playerInitialized;
@@ -46,6 +47,12 @@ namespace MPCHC_Sync
             this.Left = (screenWidth / 2) - (windowWidth / 2);
             this.Top = (screenHeight / 2) - (windowHeight / 2) + 210;
 
+        }
+
+        private void clientOnError(object sender, ClientErrorEventArgs e)
+        {
+            client.Disconnect();
+            MessageBox.Show($"{e.description} ({e.code.ToString()})", "Error from server", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void playerInitialized(object sender, EventArgs e)
@@ -107,14 +114,13 @@ namespace MPCHC_Sync
             if (openFileDialog.ShowDialog() == true)
             {
                 string filePath = openFileDialog.FileName;
-                Debug.WriteLine("TODO: " + filePath);
 
                 // Open file
                 player.OpenFile(filePath);
                 Info info = player.GetInfo();
 
                 // Connect to server
-                bool succes = client.Connect(Dns.GetHostName(), 5000, true);
+                bool succes = client.Connect(settings.Host, settings.Port, true);
                 if (succes)
                 {
                     client.Subscribe(settings.Token, settings.UUID);
@@ -130,10 +136,24 @@ namespace MPCHC_Sync
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
-            //player.SetState(State.Paused);
-            //player.SetPosition(new TimeSpan(0, 0, 20));
-            Info info = player.GetLastInfo();
-            client.Set(settings.Token, settings.UUID, info.FileName, info.Position +  TimeSpan.FromSeconds(10.5), info.Duration, State.Paused);
+            string sessionId = connectAddressTextBox.Text;
+            if (sessionId.Length != settings.UUID.Length)
+            {
+                MessageBox.Show("Wrong session id size", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Connect to server
+            bool succes = client.Connect(settings.Host, settings.Port, false);
+            if (succes)
+            {
+                client.Subscribe(settings.Token, sessionId);
+                connectedAddressLabel.Content = client.subscribedSessionIdentifer;
+            }
+            else
+            {
+                MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void disconnectButton_Click(object sender, RoutedEventArgs e)

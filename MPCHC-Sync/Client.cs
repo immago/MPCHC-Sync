@@ -26,6 +26,12 @@ namespace MPCHC_Sync
         public ConnectionState state { get; set; }
     }
 
+    public class ClientErrorEventArgs : EventArgs
+    {
+        public int code { get; set; }
+        public string description { get; set; }
+    }
+
     public enum ConnectionState
     {
         Disconnected,
@@ -39,6 +45,7 @@ namespace MPCHC_Sync
         public string subscribedSessionIdentifer { get; private set; }
         public event EventHandler<ClientConnectionEventArgs> connectionStateChanged;
         public event EventHandler<ClientVideoEventArgs> videoStateChanged;
+        public event EventHandler<ClientErrorEventArgs> onError;
         private TcpClient client;
 
         public bool Connect(String address, int port, bool host = true)
@@ -184,6 +191,14 @@ namespace MPCHC_Sync
             if(responce.status == "error")
             {
                 Debug.WriteLine($"Error: {responce.description} code: {responce.code}");
+
+                if (onError != null)
+                {
+                    ClientErrorEventArgs args = new ClientErrorEventArgs();
+                    args.code = responce.code;
+                    args.description = responce.description;
+                    onError(this, args);
+                }
             }
 
             if(responce.status == "ok")
