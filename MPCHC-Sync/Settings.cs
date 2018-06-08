@@ -80,12 +80,41 @@ namespace MPCHC_Sync
 
                 return _Host;
             }
-            set { _Host = value; Write("Host", value); }
+            set
+            {
+                if(value == Dns.GetHostName())
+                {
+                    _Host = "localhost";
+                    Write("Host", "localhost");
+                }
+                else
+                {
+                    _Host = value;
+                    Write("Host", value);
+                }
+            }
+        }
+
+        // MPCWebUIAddress
+        private static string _MPCWebUIAddress;
+        public static string MPCWebUIAddress
+        {
+            get
+            {
+                if (_MPCWebUIAddress != null)
+                {
+                    return _MPCWebUIAddress;
+                }
+
+                _MPCWebUIAddress = Read("MPCWebUIAddress", "http://localhost:13579");
+                return _MPCWebUIAddress;
+            }
+            set { _MPCWebUIAddress = value; Write("MPCWebUIAddress", value); }
         }
 
         public static bool IsConfigured()
         {
-            return FileExists("Host") && FileExists("Port") && FileExists("Token") && FileExists("UUID");
+            return FileExists("Host") && FileExists("Port") && FileExists("Token") && FileExists("UUID") && FileExists("MPCWebUIAddress");
         }
 
         private static string Read(string variableName, string defaultValue)

@@ -33,7 +33,7 @@ namespace MPCHC_Sync
 
         public MPCController()
         {
-            player = new MPCHomeCinema("http://localhost:13579");
+            player = new MPCHomeCinema(Settings.MPCWebUIAddress);
             updateInterval = new TimeSpan(0, 0, 1);
 
             // Wait connection

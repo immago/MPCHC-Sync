@@ -23,9 +23,9 @@
             <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch"/>
             <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="2" VerticalContentAlignment="Stretch"/>
             <Button x:Name="connectButton" Content="Connect" Margin="5,2,0,5" Grid.Row="3" Click="connectButton_Click" Grid.ColumnSpan="2"/>
-            <Button x:Name="hostButton" Content="Host" Margin="5,5,5,2" Grid.Row="2" Grid.ColumnSpan="3" Click="hostButton_Click"/>
+            <Button x:Name="hostButton" Content="Host" Margin="5,5,5,2" Grid.Row="2" Click="hostButton_Click" Grid.Column="2"/>
             <TextBox x:Name="connectAddressTextBox" Grid.Column="2" Margin="5,2.5,5,5" Grid.Row="3" TextWrapping="Wrap" Text="12345678-9abc-d234-5678-90abcd234567"/>
-            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="3" Background="White">
+            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="3" Background="White" Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27*"/>
                     <RowDefinition Height="41*"/>
@@ -39,6 +39,7 @@
                 <Button x:Name="disconnectButton" Content="Disconnect" Margin="5" Grid.Row="1" Grid.ColumnSpan="2" Click="disconnectButton_Click"/>
 
             </Grid>
+            <Button x:Name="settingsButton" Grid.ColumnSpan="2" Content="Settings" Margin="5,5,0,2" Grid.Row="2" Click="settingsButton_Click"/>
         </Grid>
 
     </Grid>

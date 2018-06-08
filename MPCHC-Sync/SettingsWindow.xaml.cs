@@ -15,7 +15,7 @@ namespace MPCHC_Sync
             serverPortTextBox.Text = Settings.Port.ToString();
             serverAddressTextBox.Text = Settings.Host;
             tokenTextBox.Text = Settings.Token;
-
+            mpcAddressTextBox.Text = Settings.MPCWebUIAddress;
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
@@ -23,6 +23,7 @@ namespace MPCHC_Sync
             Settings.Port = Int32.Parse(serverPortTextBox.Text);
             Settings.Host = serverAddressTextBox.Text;
             Settings.Token = tokenTextBox.Text;
+            Settings.MPCWebUIAddress = mpcAddressTextBox.Text;
             this.DialogResult = true;
         }
     }

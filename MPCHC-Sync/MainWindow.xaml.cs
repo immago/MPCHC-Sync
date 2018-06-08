@@ -224,5 +224,11 @@ namespace MPCHC_Sync
                 mpcProceess.CloseMainWindow();
             }
         }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsDialog = new SettingsWindow();
+            settingsDialog.ShowDialog();
+        }
     }
 }
