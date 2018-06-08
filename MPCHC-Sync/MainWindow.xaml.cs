@@ -37,7 +37,8 @@ namespace MPCHC_Sync
 
             // Not connected
             disconnectGrid.Visibility = Visibility.Hidden;
-            this.IsEnabled = false;
+            connectButton.IsEnabled = false;
+            hostButton.IsEnabled = false;
 
             // Run MPC
             mpcProceess = Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "lib/mpc-hc64/mpc-hc64.exe"));
@@ -66,7 +67,8 @@ namespace MPCHC_Sync
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                this.IsEnabled = true;
+                connectButton.IsEnabled = true;
+                hostButton.IsEnabled = true;
                 nameLabel.Content = "";
             });
         }

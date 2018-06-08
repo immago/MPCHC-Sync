@@ -71,28 +71,10 @@ namespace MPCHC_Sync
                     return _Host;
                 }
 
-                _Host = Read("Host", "localhost");
-
-                if (_Host == "localhost")
-                {
-                    return Dns.GetHostName();
-                }
-
+                _Host = Read("Host", Dns.GetHostName());
                 return _Host;
             }
-            set
-            {
-                if(value == Dns.GetHostName())
-                {
-                    _Host = "localhost";
-                    Write("Host", "localhost");
-                }
-                else
-                {
-                    _Host = value;
-                    Write("Host", value);
-                }
-            }
+            set { _Host = value; Write("Host", value); }
         }
 
         // MPCWebUIAddress
