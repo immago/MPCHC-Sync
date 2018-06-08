@@ -213,6 +213,12 @@ namespace MPCHC_Sync
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            client.videoStateChanged -= clientVideoStateChanged;
+            client.connectionStateChanged -= clientConnectionStateChanged;
+            client.onError -= clientOnError;
+            player.stateChanged -= playerStateChanged;
+            player.initialized -= playerInitialized;
+
             client.Disconnect();
             if (!mpcProceess.HasExited) { 
                 mpcProceess.CloseMainWindow();
