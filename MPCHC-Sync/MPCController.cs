@@ -219,6 +219,7 @@ namespace MPCHC_Sync
             StopUpdate();
             Task.Run(async () =>
             {
+                // TODO: check file open
                 Result openResult = await player.OpenFileAsync(path);
                 Thread.Sleep(500);
                 Result pauseResult = await player.PauseAsync();

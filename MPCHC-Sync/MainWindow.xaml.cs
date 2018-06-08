@@ -49,12 +49,14 @@ namespace MPCHC_Sync
 
         }
 
+        // On error in server
         private void clientOnError(object sender, ClientErrorEventArgs e)
         {
             client.Disconnect();
             MessageBox.Show($"{e.description} ({e.code.ToString()})", "Error from server", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        // On MPC-HC web-ui connected
         private void playerInitialized(object sender, EventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -64,6 +66,7 @@ namespace MPCHC_Sync
             });
         }
 
+        // On MPC-HC exit
         private void mpcProceessExited(object sender, EventArgs e)
         {
             client.Disconnect();
@@ -73,6 +76,7 @@ namespace MPCHC_Sync
             });
         }
 
+        // On server connect / disconnect
         private void clientConnectionStateChanged(object sender, ClientConnectionEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -81,13 +85,47 @@ namespace MPCHC_Sync
             });
         }
 
+        // On change video state by server
         private void clientVideoStateChanged(object sender, ClientVideoEventArgs e)
         {
             Debug.WriteLine("Changed by server, update local...");
+
+            // if new file, try find in same dir
+            Info info = player.GetInfo();
+            if (info.FileName != e.file)
+            {
+                // if some file opened
+                if (info.FileDir.Length > 0)
+                {
+                    string newPath = Path.Combine(info.FileDir, e.file);
+                    if (File.Exists(newPath))
+                    {
+                        player.OpenFile(newPath);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Please select {e.file}", "Open file", MessageBoxButton.OK, MessageBoxImage.Information);
+                        OpenFileDialog openFileDialog = new OpenFileDialog();
+                        openFileDialog.Filter = $"{e.file}|{e.file}|All files (*.*)|*.*";
+                        
+                        if (openFileDialog.ShowDialog() == true)
+                        {
+                            string filePath = openFileDialog.FileName;
+
+                            // Open file
+                            player.OpenFile(filePath);
+                            client.Get(settings.Token, client.subscribedSessionIdentifer);
+                        }
+                    }
+
+                }
+            }
+
             player.SetPosition(e.position);
             player.SetState(e.state);
         }
 
+        // On change video state by client
         private void playerStateChanged(object sender, MPCControllerEventArgs e)
         {
             Info info = e.info;
@@ -130,6 +168,7 @@ namespace MPCHC_Sync
                 else
                 {
                     MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 } 
             }
         }
@@ -153,6 +192,7 @@ namespace MPCHC_Sync
             else
             {
                 MessageBox.Show("Can't connect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
         }
 
