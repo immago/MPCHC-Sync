@@ -144,13 +144,13 @@ namespace MPCHC_Sync
             }
         }
 
-        public void Subscribe(string token, string identifer)
+        public void Subscribe(string token, string identifer, bool host = false)
         {
             var data = new Dictionary<string, string>
             {
                 ["token"] = token,
                 ["identifer"] = identifer,
-                ["command"] = "subscribe"
+                ["command"] = host ? "host" : "subscribe"
             };
             subscribedSessionIdentifer = identifer;
             Send(JsonConvert.SerializeObject(data));

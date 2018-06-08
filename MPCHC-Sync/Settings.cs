@@ -6,27 +6,110 @@ namespace MPCHC_Sync
 {
     class Settings
     {
-        private string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MPCHC-Sync");
-        public string UUID { get; private set; }
-        public string Token { get; private set; }
-        public int Port { get; private set; }
-        public string Host { get; private set; }
+        private static string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MPCHC-Sync");
 
-        public Settings()
+        // UUID
+        private static string _UUID;
+        public static string UUID
         {
-            Directory.CreateDirectory(path);
+            get {
 
-            string uuidPath = Path.Combine(path, "UUID");
-            if (!File.Exists(uuidPath))
-            {
-                File.WriteAllText(uuidPath, Guid.NewGuid().ToString());
+                if (_UUID != null)
+                {
+                    return _UUID;
+                }
+
+                _UUID = Read("UUID", Guid.NewGuid().ToString());
+                return _UUID;
             }
-
-            this.UUID = File.ReadAllText(uuidPath);
-            this.Token = "86de0ff4-3115-4385-b485-b5e83ae6b890";
-            this.Port = 5000;
-            this.Host = Dns.GetHostName();
+            set { _UUID = value; Write("UUID", value); }
         }
 
+        // Token
+        private static string _Token;
+        public static string Token
+        {
+            get
+            {
+                if (_Token != null)
+                {
+                    return _Token;
+                }
+
+                _Token = Read("Token", "86de0ff4-3115-4385-b485-b5e83ae6b890");
+                return _Token;
+            }
+            set { _Token = value; Write("Token", value); }
+        }
+
+
+        // Port
+        private static int _Port;
+        public static int Port
+        {
+            get
+            {
+                if (_Port > 0)
+                {
+                    return _Port;
+                }
+
+                _Port = Int32.Parse(Read("Port", "5000"));
+                return _Port;
+            }
+            set { _Port = value; Write("Port", value.ToString()); }
+        }
+
+        // Host
+        private static string _Host;
+        public static string Host
+        {
+            get
+            {
+                if (_Host != null)
+                {
+                    return _Host;
+                }
+
+                _Host = Read("Host", "localhost");
+
+                if (_Host == "localhost")
+                {
+                    return Dns.GetHostName();
+                }
+
+                return _Host;
+            }
+            set { _Host = value; Write("Host", value); }
+        }
+
+        public static bool IsConfigured()
+        {
+            return FileExists("Host") && FileExists("Port") && FileExists("Token") && FileExists("UUID");
+        }
+
+        private static string Read(string variableName, string defaultValue)
+        {
+            Directory.CreateDirectory(path);
+            string varPath = Path.Combine(path, variableName);
+            if (!File.Exists(varPath))
+            {
+                File.WriteAllText(varPath, defaultValue);
+            }
+            return File.ReadAllText(varPath);
+        }
+
+        private static void Write(string variableName, string value)
+        {
+            Directory.CreateDirectory(path);
+            string varPath = Path.Combine(path, variableName);
+            File.WriteAllText(varPath, value); 
+        }
+
+        private static bool FileExists(string name)
+        {
+            Directory.CreateDirectory(path);
+            return File.Exists(Path.Combine(path, name));
+        }
     }
 }

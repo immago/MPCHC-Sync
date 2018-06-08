@@ -13,7 +13,6 @@ namespace MPCHC_Sync
     public partial class MainWindow : Window
     {
         private MPCController player;
-        private Settings settings;
         private Client client;
         private Process mpcProceess;
 
@@ -21,7 +20,13 @@ namespace MPCHC_Sync
         {
             InitializeComponent();
 
-            settings = new Settings();
+            if (!Settings.IsConfigured())
+            {
+                SettingsWindow settingsDialog = new SettingsWindow();
+                settingsDialog.ShowDialog();
+            }
+
+
             client = new Client();
             client.videoStateChanged += clientVideoStateChanged;
             client.connectionStateChanged += clientConnectionStateChanged;
@@ -114,7 +119,7 @@ namespace MPCHC_Sync
 
                             // Open file
                             player.OpenFile(filePath);
-                            client.Get(settings.Token, client.subscribedSessionIdentifer);
+                            client.Get(Settings.Token, client.subscribedSessionIdentifer);
                         }
                     }
 
@@ -132,7 +137,7 @@ namespace MPCHC_Sync
             if (e.chnagedByUser)
             {
                 Debug.WriteLine("Changed by user, sending to server...");
-                client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
+                client.Set(Settings.Token, Settings.UUID, info.FileName, info.Position, info.Duration, info.State);
             }
 
             Application.Current.Dispatcher.Invoke(() =>
@@ -158,12 +163,12 @@ namespace MPCHC_Sync
                 Info info = player.GetInfo();
 
                 // Connect to server
-                bool succes = client.Connect(settings.Host, settings.Port, true);
+                bool succes = client.Connect(Settings.Host, Settings.Port, true);
                 if (succes)
                 {
-                    client.Subscribe(settings.Token, settings.UUID);
+                    client.Subscribe(Settings.Token, Settings.UUID, true);
                     connectedAddressLabel.Content = client.subscribedSessionIdentifer;
-                    client.Set(settings.Token, settings.UUID, info.FileName, info.Position, info.Duration, info.State);
+                    client.Set(Settings.Token, Settings.UUID, info.FileName, info.Position, info.Duration, info.State);
                 }
                 else
                 {
@@ -176,17 +181,17 @@ namespace MPCHC_Sync
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
             string sessionId = connectAddressTextBox.Text;
-            if (sessionId.Length != settings.UUID.Length)
+            if (sessionId.Length != Settings.UUID.Length)
             {
                 MessageBox.Show("Wrong session id size", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             // Connect to server
-            bool succes = client.Connect(settings.Host, settings.Port, false);
+            bool succes = client.Connect(Settings.Host, Settings.Port, false);
             if (succes)
             {
-                client.Subscribe(settings.Token, sessionId);
+                client.Subscribe(Settings.Token, sessionId);
                 connectedAddressLabel.Content = client.subscribedSessionIdentifer;
             }
             else
