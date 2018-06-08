@@ -88,7 +88,7 @@ namespace MPCHC_Sync
                     return _MPCWebUIAddress;
                 }
 
-                _MPCWebUIAddress = Read("MPCWebUIAddress", "http://localhost:13579");
+                _MPCWebUIAddress = Read("MPCWebUIAddress", "http://localhost:13575");
                 return _MPCWebUIAddress;
             }
             set { _MPCWebUIAddress = value; Write("MPCWebUIAddress", value); }

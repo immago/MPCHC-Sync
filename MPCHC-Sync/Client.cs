@@ -57,8 +57,9 @@ namespace MPCHC_Sync
                 NetworkStream stream = client.GetStream();
                 new Thread(Read).Start();
                 OnConnectionStateChanged(host ? ConnectionState.Host : ConnectionState.Subscribed);
-            }catch
+            }catch (Exception e)
             {
+                Debug.Write(e.Message);
                 return false;
             }
             return true;

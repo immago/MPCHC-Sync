@@ -52,7 +52,7 @@ namespace MPCHC_Sync
             double windowWidth = this.Width;
             double windowHeight = this.Height;
             this.Left = (screenWidth / 2) - (windowWidth / 2);
-            this.Top = (screenHeight / 2) - (windowHeight / 2) + 210;
+            this.Top = (screenHeight / 2) - (windowHeight / 2) + 175;
 
         }
 
@@ -70,7 +70,7 @@ namespace MPCHC_Sync
             {
                 connectButton.IsEnabled = true;
                 hostButton.IsEnabled = true;
-                nameLabel.Content = "";
+                nameLabel.Content = "Ready...";
             });
         }
 
@@ -150,7 +150,7 @@ namespace MPCHC_Sync
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                nameLabel.Content = info.FileName;
+                nameLabel.Content = info.FileName.Length > 0 ? info.FileName : "Ready...";
                 positionLabel.Content = $"{info.Position:hh\\:mm\\:ss}/{info.Duration:hh\\:mm\\:ss}";
                 statusLabel.Content = info.State;
             });
@@ -189,6 +189,13 @@ namespace MPCHC_Sync
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
             string sessionId = connectAddressTextBox.Text;
+
+            if (sessionId.Length == 0)
+            {
+                MessageBox.Show("Enter session id", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (sessionId.Length != Settings.UUID.Length)
             {
                 MessageBox.Show("Wrong session id size", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -237,6 +244,23 @@ namespace MPCHC_Sync
         {
             SettingsWindow settingsDialog = new SettingsWindow();
             settingsDialog.ShowDialog();
+        }
+
+        private void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        // Move window
+        private void nameLabel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == System.Windows.Input.MouseButton.Left)
+                DragMove();
         }
     }
 }

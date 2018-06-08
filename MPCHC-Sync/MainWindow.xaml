@@ -5,13 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPCHC_Sync"
         mc:Ignorable="d"
-        Title="MPC-HC Sync" Height="165" Width="414" Closed="Window_Closed" ResizeMode="CanMinimize">
+        Title="MPC-HC Sync" Height="130" Width="373" Closed="Window_Closed" ResizeMode="CanMinimize" WindowStyle="None">
+    <Window.Resources>
+        <Style x:Key="placeHolder" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Grid>
+                            <TextBox Text="{Binding Path=Text,
+                                                RelativeSource={RelativeSource TemplatedParent}, 
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                                 x:Name="textSource" 
+                                 Background="Transparent" 
+                                 Panel.ZIndex="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <TextBox Text="{TemplateBinding Tag}" Background="{TemplateBinding Background}" Panel.ZIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="{x:Type TextBox}">
+                                        <Setter Property="Foreground" Value="Transparent"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="55"/>
                 <ColumnDefinition Width="55"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -19,14 +52,14 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="3" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch"/>
+            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="3" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch" MouseDown="nameLabel_MouseDown"/>
             <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch"/>
-            <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="2" VerticalContentAlignment="Stretch"/>
+            <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="4" VerticalContentAlignment="Stretch"/>
             <Button x:Name="connectButton" Content="Connect" Margin="5,2,0,5" Grid.Row="3" Click="connectButton_Click" Grid.ColumnSpan="2"/>
-            <Button x:Name="hostButton" Content="Host" Margin="5,5,5,2" Grid.Row="2" Click="hostButton_Click" Grid.Column="2"/>
-            <TextBox x:Name="connectAddressTextBox" Grid.Column="2" Margin="5,2.5,5,5" Grid.Row="3" TextWrapping="Wrap" Text="12345678-9abc-d234-5678-90abcd234567"/>
+            <Button x:Name="hostButton" Content="Host" Margin="5,5,5,2" Grid.Row="2" Click="hostButton_Click" Grid.Column="2" Grid.ColumnSpan="3"/>
+            <TextBox x:Name="connectAddressTextBox" Style="{StaticResource placeHolder}" Tag="12345678-9abc-d234-5678-90abcd234567" Grid.Column="2" Margin="5,2,5,4" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <Button x:Name="settingsButton" Grid.ColumnSpan="2" Content="Settings" Margin="5,5,0,2" Grid.Row="2" Click="settingsButton_Click"/>
-            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="3" Background="White" Visibility="Hidden">
+            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="5" Background="White" Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27*"/>
                     <RowDefinition Height="41*"/>
@@ -39,6 +72,8 @@
                 <Button x:Name="copyConnectedAddressButton" Content="Copy" Margin="5,0,0,0" Click="copyConnectedAddressButton_Click"/>
                 <Button x:Name="disconnectButton" Content="Disconnect" Margin="5" Grid.Row="1" Grid.ColumnSpan="2" Click="disconnectButton_Click"/>
             </Grid>
+            <Button x:Name="closeButton" Content="X" Grid.Column="4" Click="closeButton_Click"/>
+            <Button x:Name="minimizeButton" Content="-" Grid.Column="3" Click="minimizeButton_Click"/>
         </Grid>
     </Grid>
 </Window>
