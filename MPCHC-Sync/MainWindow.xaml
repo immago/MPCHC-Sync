@@ -36,6 +36,26 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="imagedButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
     <Grid>
         <Grid>
@@ -52,7 +72,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="3" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch" MouseDown="nameLabel_MouseDown"/>
+            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="5" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch" MouseDown="nameLabel_MouseDown"/>
             <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch"/>
             <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="4" VerticalContentAlignment="Stretch"/>
             <Button x:Name="connectButton" Content="Connect" Margin="5,2,0,5" Grid.Row="3" Click="connectButton_Click" Grid.ColumnSpan="2"/>
@@ -72,8 +92,16 @@
                 <Button x:Name="copyConnectedAddressButton" Content="Copy" Margin="5,0,0,0" Click="copyConnectedAddressButton_Click"/>
                 <Button x:Name="disconnectButton" Content="Disconnect" Margin="5" Grid.Row="1" Grid.ColumnSpan="2" Click="disconnectButton_Click"/>
             </Grid>
-            <Button x:Name="closeButton" Content="X" Grid.Column="4" Click="closeButton_Click"/>
-            <Button x:Name="minimizeButton" Content="-" Grid.Column="3" Click="minimizeButton_Click"/>
+            <Button x:Name="closeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="4" Click="closeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="Resources/icon-close.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="minimizeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="3" Click="minimizeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="Resources/icon-minimize.png"/>
+                </Button.Background>
+            </Button>
         </Grid>
     </Grid>
 </Window>
