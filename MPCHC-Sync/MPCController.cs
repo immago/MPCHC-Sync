@@ -192,11 +192,14 @@ namespace MPCHC_Sync
         public void SetPosition(TimeSpan position)
         {
 
-            TimeSpan difference = position - previousInfo.Position;
-            double maxError = 500 + updateInterval.TotalMilliseconds; // ms 
-            if (Math.Abs(difference.TotalMilliseconds) < maxError) // not needed
+            if (previousInfo != null)
             {
-                return;
+                TimeSpan difference = position - previousInfo.Position;
+                double maxError = 500 + updateInterval.TotalMilliseconds; // ms 
+                if (Math.Abs(difference.TotalMilliseconds) < maxError) // not needed
+                {
+                    return;
+                }
             }
 
             StopUpdate();

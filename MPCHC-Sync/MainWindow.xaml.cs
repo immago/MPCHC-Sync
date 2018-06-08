@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using Microsoft.Win32;
 using System.IO;
+using System.Threading;
 
 namespace MPCHC_Sync
 {
@@ -76,7 +77,6 @@ namespace MPCHC_Sync
         // On MPC-HC exit
         private void mpcProceessExited(object sender, EventArgs e)
         {
-            client.Disconnect();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Application.Current.Shutdown();
@@ -102,30 +102,36 @@ namespace MPCHC_Sync
             if (info.FileName != e.file)
             {
                 // if some file opened
+                string openPath = null;
                 if (info.FileDir.Length > 0)
                 {
                     string newPath = Path.Combine(info.FileDir, e.file);
                     if (File.Exists(newPath))
                     {
-                        player.OpenFile(newPath);
+                        openPath = newPath;
                     }
-                    else
-                    {
-                        MessageBox.Show($"Please select {e.file}", "Open file", MessageBoxButton.OK, MessageBoxImage.Information);
-                        OpenFileDialog openFileDialog = new OpenFileDialog();
-                        openFileDialog.Filter = $"{e.file}|{e.file}|All files (*.*)|*.*";
-                        
-                        if (openFileDialog.ShowDialog() == true)
-                        {
-                            string filePath = openFileDialog.FileName;
-
-                            // Open file
-                            player.OpenFile(filePath);
-                            client.Get(Settings.Token, client.subscribedSessionIdentifer);
-                        }
-                    }
-
                 }
+                
+                if(openPath != null)
+                {
+                    player.OpenFile(openPath);
+                }else
+                {
+                    MessageBox.Show($"Please select {e.file}", "Open file", MessageBoxButton.OK, MessageBoxImage.Information);
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    openFileDialog.Filter = $"{e.file}|{e.file}|All files (*.*)|*.*";
+
+                    if (openFileDialog.ShowDialog() == true)
+                    {
+                        string filePath = openFileDialog.FileName;
+
+                        // Open file
+                        player.OpenFile(filePath);
+                        client.Get(Settings.Token, client.subscribedSessionIdentifer);
+                    }
+                }
+
+                
             }
 
             player.SetPosition(e.position);
@@ -220,7 +226,6 @@ namespace MPCHC_Sync
             client.onError -= clientOnError;
             player.stateChanged -= playerStateChanged;
             player.initialized -= playerInitialized;
-
             client.Disconnect();
             if (!mpcProceess.HasExited) { 
                 mpcProceess.CloseMainWindow();
