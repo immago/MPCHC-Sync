@@ -143,11 +143,15 @@ namespace MPCHC_Sync
             }
 
             // position changed
-            if (current.State == State.Playing)
+            if (current.State == State.Playing || current.State == State.Paused)
             {
                 TimeSpan difference = current.Position - previous.Position;
+                if(current.State == State.Playing)
+                {
+                    difference -= timePassed;
+                }
                 double maxError = 500; // ms 
-                if(Math.Abs((difference - timePassed).TotalMilliseconds) > maxError) // user move position
+                if(Math.Abs(difference.TotalMilliseconds) > maxError) // user move position
                 {
                     return true;
                 }

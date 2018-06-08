@@ -201,6 +201,7 @@ namespace MPCHC_Sync
             {
                 client.Subscribe(Settings.Token, sessionId);
                 connectedAddressLabel.Content = client.subscribedSessionIdentifer;
+                client.Get(Settings.Token, sessionId);
             }
             else
             {
