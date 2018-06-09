@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPCHC_Sync"
         mc:Ignorable="d"
-        Title="Settings" Height="155.402" Width="371.927" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Settings" Height="155.402" Width="448.927" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="Resources/icon-settings.png">
     <Grid>
         <Grid >
             <Grid.RowDefinitions>
@@ -17,15 +17,16 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
             <Label Content="Server address" HorizontalContentAlignment="Right" Background="#FFDDDDDD" Margin="2,1,1,1"/>
             <Label Content="Token" Grid.Row="1" HorizontalContentAlignment="Right" Background="#FFDDDDDD" Margin="2,1,1,1"/>
             <Label Content="MPC address" Grid.Row="2" Margin="2,1,1,1" HorizontalContentAlignment="Right" Background="#FFDDDDDD"/>
-            <Button x:Name="saveButton" Content="Save" Grid.Row="3" Grid.ColumnSpan="2" Margin="2,1,2,2" Click="saveButton_Click"/>
-            <TextBox x:Name="serverAddressTextBox" Grid.Column="1" Margin="1,1,47,1" TextWrapping="Wrap" Text="localhost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0,5,0,0"/>
-            <TextBox x:Name="tokenTextBox" Grid.Column="1" Margin="1" Grid.Row="1" TextWrapping="Wrap" Text="86de0ff4-3115-4385-b485-b5e83ae6b890" Width="262" Padding="0,5,0,0"/>
-            <TextBox x:Name="serverPortTextBox" Grid.Column="1" Margin="221,1,1,1" TextWrapping="Wrap" Text="5000" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0,5,0,0"/>
-            <TextBox x:Name="mpcAddressTextBox" Grid.Column="1" Margin="2,1" Grid.Row="2" TextWrapping="Wrap" Text="http://localhost:13579" Padding="0,5,0,0"/>
+            <Button x:Name="saveButton" Content="Save" Grid.Row="3" Grid.ColumnSpan="3" Margin="2,1,2,2" Click="saveButton_Click"/>
+            <TextBox x:Name="serverAddressTextBox" Grid.Column="1" Margin="1,1,2,1" TextWrapping="Wrap" Text="localhost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0,5,0,0"/>
+            <TextBox x:Name="tokenTextBox" Grid.Column="1" Margin="1" Grid.Row="1" TextWrapping="Wrap" Text="86de0ff4-3115-4385-b485-b5e83ae6b890" Padding="0,5,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="serverPortTextBox" Grid.Column="2" Margin="2,1,1,1" TextWrapping="Wrap" Text="50000" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0,5,0,0"/>
+            <TextBox x:Name="mpcAddressTextBox" Grid.Column="1" Margin="2,1" Grid.Row="2" TextWrapping="Wrap" Text="http://localhost:13579" Padding="0,5,0,0" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </Window>
