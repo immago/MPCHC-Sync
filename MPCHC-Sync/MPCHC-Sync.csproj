@@ -178,6 +178,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\icon-host.png" />
     <Resource Include="Resources\icon-join.png" />
     <Resource Include="Resources\icon-settings.png" />
     <Resource Include="Resources\icon-close.png" />

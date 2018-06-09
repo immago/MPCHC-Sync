@@ -60,8 +60,7 @@
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="58"/>
-                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="70"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="30"/>
@@ -73,22 +72,27 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="6" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch" MouseDown="nameLabel_MouseDown"/>
-            <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch"/>
-            <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="5" VerticalContentAlignment="Stretch"/>
-            <Button x:Name="connectButton"  Style="{StaticResource imagedButton}" Content="" Margin="5,2,0,5" Grid.Row="3" Click="connectButton_Click" Grid.ColumnSpan="2" BorderBrush="{x:Null}">
+            <Rectangle Grid.ColumnSpan="5" Fill="Black" Margin="0" Stroke="Black"/>
+            <Label x:Name="nameLabel" Content="Waiting for MPC-HC..." Grid.ColumnSpan="2" FontWeight="Bold" Background="Black" Foreground="White" VerticalContentAlignment="Stretch" MouseDown="nameLabel_MouseDown" Margin="10,0,0,0"/>
+            <Label x:Name="statusLabel" Content="Status" Margin="0,1,0,0" Grid.Row="1" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center"/>
+            <Label x:Name="positionLabel" Content="0:00 / 0:00" Grid.Column="1" Margin="0,1,0,0" Grid.Row="1" Grid.ColumnSpan="4" VerticalContentAlignment="Stretch"/>
+            <Button x:Name="connectButton"  Style="{StaticResource imagedButton}" Content="" Margin="0,2,0,5" Grid.Row="3" Click="connectButton_Click" BorderBrush="{x:Null}">
                 <Button.Background>
                     <ImageBrush ImageSource="Resources/icon-join.png" Stretch="None"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="hostButton" Content="Host" Margin="5,5,5,2" Grid.Row="2" Click="hostButton_Click" Grid.ColumnSpan="6"/>
-            <TextBox x:Name="connectAddressTextBox" Style="{StaticResource placeHolder}" Tag="12345678-9abc-d234-5678-90abcd234567" Grid.Column="2" Margin="5,2,5,4" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="4" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-            <Button x:Name="settingsButton" Style="{StaticResource imagedButton}" Content="" Margin="0" Click="settingsButton_Click" BorderBrush="{x:Null}" Grid.Column="3">
+            <Button x:Name="hostButton" Style="{StaticResource imagedButton}" Content="         New session..." Margin="0" Grid.Row="2" Click="hostButton_Click" Grid.ColumnSpan="5" BorderBrush="{x:Null}" FontSize="16">
+                <Button.Background>
+                    <ImageBrush ImageSource="Resources/icon-host.png"/>
+                </Button.Background>
+            </Button>
+            <TextBox x:Name="connectAddressTextBox" Style="{StaticResource placeHolder}" Tag="12345678-9abc-d234-5678-90abcd234567" Grid.Column="1" Margin="5,2,5,4" Grid.Row="3" TextWrapping="Wrap" Grid.ColumnSpan="4" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <Button x:Name="settingsButton" Style="{StaticResource imagedButton}" Content="" Margin="0" Click="settingsButton_Click" BorderBrush="{x:Null}" Grid.Column="2">
                 <Button.Background>
                     <ImageBrush ImageSource="Resources/icon-settings.png" Stretch="None"/>
                 </Button.Background>
             </Button>
-            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="6" Background="White" Visibility="Hidden">
+            <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="5" Background="White" Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27*"/>
                     <RowDefinition Height="41*"/>
@@ -101,16 +105,17 @@
                 <Button x:Name="copyConnectedAddressButton" Content="Copy" Margin="5,0,0,0" Click="copyConnectedAddressButton_Click"/>
                 <Button x:Name="disconnectButton" Content="Disconnect" Margin="5" Grid.Row="1" Grid.ColumnSpan="2" Click="disconnectButton_Click"/>
             </Grid>
-            <Button x:Name="closeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="5" Click="closeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
+            <Button x:Name="closeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="4" Click="closeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="Resources/icon-close.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="minimizeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="4" Click="minimizeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
+            <Button x:Name="minimizeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="3" Click="minimizeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="Resources/icon-minimize.png"/>
                 </Button.Background>
             </Button>
+            <Rectangle Grid.ColumnSpan="5" Fill="#FFA8A8A8" Margin="10,20,10,0" Grid.Row="1" Height="1" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>
