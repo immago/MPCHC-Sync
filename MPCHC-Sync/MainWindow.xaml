@@ -94,16 +94,23 @@
             </Button>
             <Grid x:Name="disconnectGrid" Margin="0" Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="5" Background="White" Visibility="Hidden">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="27*"/>
+                    <RowDefinition Height="40*"/>
                     <RowDefinition Height="41*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65*"/>
-                    <ColumnDefinition Width="319*"/>
+                    <ColumnDefinition Width="373"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="connectedAddressLabel" Content="..." Grid.Column="1" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Button x:Name="copyConnectedAddressButton" Content="Copy" Margin="5,0,0,0" Click="copyConnectedAddressButton_Click"/>
-                <Button x:Name="disconnectButton" Content="Disconnect" Margin="5" Grid.Row="1" Grid.ColumnSpan="2" Click="disconnectButton_Click"/>
+                <Label x:Name="connectedAddressLabel" Content="..." Margin="64,0,10,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF3C3C3C"/>
+                <Button x:Name="copyConnectedAddressButton" Style="{StaticResource imagedButton}" Content="" Margin="0,0,309,0" Click="copyConnectedAddressButton_Click" BorderBrush="{x:Null}">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/icon-copy.png" Stretch="None"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="disconnectButton" Style="{StaticResource imagedButton}" Content="Disconnect" Margin="0" Grid.Row="1" Click="disconnectButton_Click" FontSize="16">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/icon-exit.png" Stretch="None"/>
+                    </Button.Background>
+                </Button>
             </Grid>
             <Button x:Name="closeButton" Content="" Style="{StaticResource imagedButton}" Grid.Column="4" Click="closeButton_Click" BorderBrush="{x:Null}" BorderThickness="0">
                 <Button.Background>
