@@ -1,12 +1,7 @@
 ﻿using MPC_HC.Domain;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Diagnostics;
 using System.IO;
 
 
@@ -33,16 +28,39 @@ namespace MPCHC_Sync
 
         public MPCController()
         {
+            Console.WriteLine("[MPC] init");
             player = new MPCHomeCinema(Settings.MPCWebUIAddress);
             updateInterval = new TimeSpan(0, 0, 1);
 
             // Wait connection
             Task.Run(async () =>
             {
+                Console.WriteLine("[MPC] init GetInfo");
                 var task = await player.GetInfo();
+                Console.WriteLine(task.ToString());
                 initialized?.Invoke(this, new EventArgs());
 
             }).GetAwaiter();
+
+            /*
+            playerObserver = new MPCHomeCinemaObserver(player);
+            playerObserver.PropertyChanged += (sender, args) =>
+            {
+                switch (args.Property)
+                {
+                    case Property.File:
+                        Console.WriteLine($"Property changed from {args.OldInfo.FileName}, -> {args.NewInfo.FileName}");
+                        break;
+                    case Property.State:
+                        Console.WriteLine($"Property changed from {args.OldInfo.State}, -> {args.NewInfo.State}");
+                        break;
+                    case Property.Possition:
+                        Console.WriteLine($"Property changed from {args.OldInfo.Position}, -> {args.NewInfo.Position}");
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            };*/
 
             // Update normaly
             RunUpdate();
@@ -53,7 +71,6 @@ namespace MPCHC_Sync
         public Info GetLastInfo()
         {
             return previousInfo;
-
         }
 
         public Info GetInfo()
@@ -68,9 +85,10 @@ namespace MPCHC_Sync
 
         private void RunUpdate()
         {
-            if(cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
+            Console.WriteLine("[MPC] RunUpdate");
+            if (cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
             {
-                Debug.WriteLine("alrady runned");
+                Console.WriteLine("[MPC] alrady runned");
                 return;
             }
 
@@ -85,6 +103,7 @@ namespace MPCHC_Sync
 
         private void StopUpdate()
         {
+            Console.WriteLine("[MPC] StopUpdate");
             previousInfo = null;
             cancelTokenSource.Cancel();
         }
@@ -93,6 +112,7 @@ namespace MPCHC_Sync
         {
             while (!cancellationToken.IsCancellationRequested)
             {
+                Console.WriteLine("[MPC] RunUpdateTask GetInfo()");
                 var task = await player.GetInfo();
 
                 // Send event

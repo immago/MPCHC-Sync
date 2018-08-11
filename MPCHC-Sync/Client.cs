@@ -59,7 +59,7 @@ namespace MPCHC_Sync
                 OnConnectionStateChanged(host ? ConnectionState.Host : ConnectionState.Subscribed);
             }catch (Exception e)
             {
-                Debug.Write(e.Message);
+                Console.WriteLine(e.Message);
                 return false;
             }
             return true;
@@ -93,7 +93,7 @@ namespace MPCHC_Sync
         void Read()
         {
             NetworkStream stream = client.GetStream();
-            Debug.WriteLine("Start read");
+            Console.WriteLine("Start read");
             while (client.Connected)
             {
 
@@ -127,7 +127,7 @@ namespace MPCHC_Sync
                 }
                 else
                 {
-                    Debug.WriteLine("Sorry.  You cannot read from this NetworkStream.");
+                    Console.WriteLine("Sorry.  You cannot read from this NetworkStream.");
                 }
             }
             OnConnectionStateChanged(ConnectionState.Disconnected);
@@ -185,13 +185,13 @@ namespace MPCHC_Sync
 
         void ProcessResponce(String responceString)
         {
-            Debug.WriteLine("Command: " + responceString);
+            Console.WriteLine("Command: " + responceString);
 
             dynamic responce = JsonConvert.DeserializeObject(responceString);
 
             if(responce.status == "error")
             {
-                Debug.WriteLine($"Error: {responce.description} code: {responce.code}");
+                Console.WriteLine($"Error: {responce.description} code: {responce.code}");
 
                 if (onError != null)
                 {
@@ -204,7 +204,7 @@ namespace MPCHC_Sync
 
             if(responce.status == "ok")
             {
-                Debug.WriteLine($"Status: {responce.status} Command: {responce.command}");
+                Console.WriteLine($"Status: {responce.status} Command: {responce.command}");
             }
 
             if(responce.new_data != null)

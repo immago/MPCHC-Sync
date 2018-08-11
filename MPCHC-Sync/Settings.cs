@@ -20,6 +20,7 @@ namespace MPCHC_Sync
                 }
 
                 _UUID = Read("UUID", Guid.NewGuid().ToString());
+                Write("UUID", _UUID);
                 return _UUID;
             }
             set { _UUID = value; Write("UUID", value); }

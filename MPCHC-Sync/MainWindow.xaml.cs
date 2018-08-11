@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Diagnostics;
-using System.Net;
 using Microsoft.Win32;
 using System.IO;
-using System.Threading;
 
 namespace MPCHC_Sync
 {
@@ -66,6 +64,7 @@ namespace MPCHC_Sync
         // On MPC-HC web-ui connected
         private void playerInitialized(object sender, EventArgs e)
         {
+            Console.WriteLine("[Main window] playerInitialized");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 connectButton.IsEnabled = true;
@@ -95,7 +94,7 @@ namespace MPCHC_Sync
         // On change video state by server
         private void clientVideoStateChanged(object sender, ClientVideoEventArgs e)
         {
-            Debug.WriteLine("Changed by server, update local...");
+            Console.WriteLine("Changed by server, update local...");
 
             // if new file, try find in same dir
             Info info = player.GetInfo();
@@ -144,7 +143,7 @@ namespace MPCHC_Sync
             Info info = e.info;
             if (e.chnagedByUser)
             {
-                Debug.WriteLine("Changed by user, sending to server...");
+                Console.WriteLine("Changed by user, sending to server...");
                 client.Set(Settings.Token, Settings.UUID, info.FileName, info.Position, info.Duration, info.State);
             }
 
