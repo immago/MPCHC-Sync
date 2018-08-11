@@ -129,6 +129,7 @@
     <Compile Include="lib\MPC-HC.Domain\Enums\Property.cs" />
     <Compile Include="lib\MPC-HC.Domain\Enums\ResultCode.cs" />
     <Compile Include="lib\MPC-HC.Domain\Enums\State.cs" />
+    <Compile Include="lib\MPC-HC.Domain\ExceptionEventArgs.cs" />
     <Compile Include="lib\MPC-HC.Domain\Helpers\AsyncHelpers.cs" />
     <Compile Include="lib\MPC-HC.Domain\Helpers\HtmlParserHelper.cs" />
     <Compile Include="lib\MPC-HC.Domain\IMPCHomeCinema.cs" />
